@@ -6,9 +6,8 @@ on:
       - main
 
 env:
-  REGISTRY: docker.io
-  BACKEND_IMAGE: yourdockerhubusername/mern-backend
-  FRONTEND_IMAGE: yourdockerhubusername/mern-frontend
+  BACKEND_IMAGE: gaitonde7/mern-backend
+  FRONTEND_IMAGE: gaitonde7/mern-frontend
   BACKEND_CONTEXT: ./server
   FRONTEND_CONTEXT: ./client
 
@@ -30,6 +29,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ env.BACKEND_CONTEXT }}
+          file: ${{ env.BACKEND_CONTEXT }}/Dockerfile
           push: true
           tags: ${{ env.BACKEND_IMAGE }}:latest
 
@@ -37,25 +37,27 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ env.FRONTEND_CONTEXT }}
+          file: ${{ env.FRONTEND_CONTEXT }}/Dockerfile
           push: true
           tags: ${{ env.FRONTEND_IMAGE }}:latest
 
   deploy-to-azure:
     needs: build-and-push
     runs-on: ubuntu-latest
+
     steps:
-      - name: Azure WebApp for Containers - Backend
+      - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: your-backend-app-name
+          app-name: mern-backend-app-7
           slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND }}
           images: ${{ env.BACKEND_IMAGE }}:latest
 
-      - name: Azure WebApp for Containers - Frontend
+      - name: Deploy Frontend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: your-frontend-app-name
+          app-name: mern-frontend-app-7
           slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND }}
           images: ${{ env.FRONTEND_IMAGE }}:latest
