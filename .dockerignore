@@ -1,0 +1,21 @@
+# Node modules
+**/node_modules
+
+# Logs
+**/npm-debug.log
+**/yarn-error.log
+
+# Build output
+**/build
+
+# Environment variables
+**/.env
+
+# OS / Editor-specific files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.swp
+*.swo
+*.bak
