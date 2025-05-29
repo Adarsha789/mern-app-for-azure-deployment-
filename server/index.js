@@ -1,29 +1,40 @@
-import express from "express"
-import mongoose from "mongoose"
-import bodyParser from "body-parser"
-import dotenv from "dotenv"
-import cors from "cors"
-import route from "./routes/userRoute.js"
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import route from "./routes/userRoute.js";
 
+// Load environment variables from .env
+dotenv.config();
 
-const app=express();
-app.use(bodyParser.json())
+const app = express();
 
-app.use(cors({origin:['http://localhost:3000']}))
-dotenv.config()
+// Middlewares
+app.use(bodyParser.json());
+app.use(cors({ origin: ["http://localhost:3000"] })); // Adjust as needed for production
 
+// Environment Variables
+const PORT = process.env.PORT || 8000;
+const MONGOURL = process.env.MONGOURL || "mongodb://localhost:27017/crud-app";
 
-const PORT=process.env.PORT || 7000
-const URL=process.env.MONGOURL
+// ✅ Root route (Fixes "Cannot GET /")
+app.get("/", (req, res) => {
+    res.send("✅ Backend API is running");
+});
 
-app.use("/api",route)
+// Routes
+app.use("/api", route);
 
-
-mongoose.connect('mongodb://localhost:27017/crud-app').then(()=>{
-    console.log("DB connected successfully")
-    app.listen(PORT, ()=>{
-        console.log(`Server is running on port: ${PORT}`)
+// MongoDB Connection and Server Start
+mongoose.connect(MONGOURL)
+    .then(() => {
+        console.log("✅ MongoDB connected successfully");
+        app.listen(PORT, () => {
+            console.log(`🚀 Server is running on http://localhost:${PORT}`);
+        });
     })
-
-}).catch(error=>console.log(error))
-
+    .catch((error) => {
+        console.error("❌ MongoDB connection error:", error.message);
+        process.exit(1); // Exit the process if DB connection fails
+    });
